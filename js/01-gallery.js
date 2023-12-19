@@ -41,8 +41,8 @@ function initLightBoxActions(instance) {
 
   function onEscKeyPress(event) {
     if (event.code === "Escape") {
-      instance.close();
       window.removeEventListener("keydown", onEscKeyPress);
+      instance.close();
     }
   }
 }
