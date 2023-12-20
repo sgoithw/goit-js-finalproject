@@ -5,6 +5,8 @@ console.log(galleryItems);
 
 const galleryContainer = document.querySelector(".gallery");
 
+let lightBoxInstance;
+
 renderGalleryItems(galleryItems);
 
 galleryContainer.addEventListener("click", handleImageClick);
@@ -23,27 +25,30 @@ function handleImageClick(e) {
     return;
   }
 
-  const instance = basicLightbox.create(`
+  lightBoxInstance = basicLightbox.create(
+    `
         <img src="${image.dataset.original}" width="800" height="600">
-    `);
+    `,
+    {
+      onShow: () => {
+        window.addEventListener("keydown", closeLightBoxHandler);
+      },
+      onClose: () => {
+        window.removeEventListener("keydown", closeLightBoxHandler);
+      },
+    }
+  );
 
-  instance.show();
-
-  initLightBoxActions(instance);
+  lightBoxInstance.show();
 }
 
 /**
- * Initializes lightbox actions
- * @param {BasicLightBox} instance
+ * Closes lightbox on escape key press
+ * @param {BasicLightBox} lightBoxInstance
  */
-function initLightBoxActions(instance) {
-  window.addEventListener("keydown", onEscKeyPress);
-
-  function onEscKeyPress(event) {
-    if (event.code === "Escape") {
-      window.removeEventListener("keydown", onEscKeyPress);
-      instance.close();
-    }
+function closeLightBoxHandler(event) {
+  if (event.code === "Escape" && lightBoxInstance) {
+    lightBoxInstance.close();
   }
 }
 
